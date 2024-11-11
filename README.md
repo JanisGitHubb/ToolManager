@@ -1,3 +1,2 @@
 # ToolManager
 
-## Darba plans
