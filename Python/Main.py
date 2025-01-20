@@ -2,34 +2,134 @@ from Tool import *
 from User import *
 from Complaint import *
 from Reservations import *
+from datetime import datetime, timedelta
 
 def main():
-    # Tool
-    tool1 = Tool("Maizisu panna", "Apraksts", available=True)
-    tool2 = Tool("Mikrovilnu krasns", "Apraksts", available=True)
 
-    # Users
-    user1 = User("Janis", "1234", "janis@example.com")
-    user2 = User("Peteris", "5678", "peteris@example.com")
+    # User Management
+    class UserManager:
+        def __init__(self):
+            self.users = {}
 
-    # Vienas pers. Reservation
-    single_reservation = SingleReservation(tool1.tool_name, "2024-12-05 10:00", "2024-12-05 12:00", user1.username)
-    tool1.mark_as_reserved()  # Update tool availability
+        def register_user(self, username, password, email):
+            if username in self.users:
+                return "User already exists."
+            self.users[username] = User(username, password, email)
+            return "User registered successfully."
 
-    # Vairaku Reservation
-    multiple_reservation = MultipleReservation(tool2.tool_name, "2024-12-06 14:00", "2024-12-06 16:00", 
-                                               [user1.username, user2.username])
+        def login(self, username, password):
+            user = self.users.get(username)
+            if user and user.password_hash == password:
+                return f"Welcome, {username}!"
+            return "Invalid username or password."
 
-    # Complaint
-    complaint = Complaint(1, user2.username, user1.username, "The tool was not returned on time.")
+    # Tool Management
+    class ToolManager:
+        def __init__(self):
+            self.tools = {}
 
-    # Print all objects
-    print(tool1)
-    print(user1)
-    print(user1.email)
-    print(single_reservation)
-    print(multiple_reservation)
-    print(complaint)
+        def add_tool(self, tool_name, description):
+            if tool_name in self.tools:
+                return "Tool already exists."
+            self.tools[tool_name] = Tool(tool_name, description)
+            return "Tool added successfully."
+
+        def update_tool(self, tool_name, new_description):
+            tool = self.tools.get(tool_name)
+            if not tool:
+                return "Tool not found."
+            tool.description = new_description
+            return "Tool updated successfully."
+
+        def delete_tool(self, tool_name):
+            if tool_name not in self.tools:
+                return "Tool not found."
+            del self.tools[tool_name]
+            return "Tool deleted successfully."
+
+        def list_tools(self):
+            return [str(tool) for tool in self.tools.values()]
+
+    # Reservation System
+    class ReservationManager:
+        def __init__(self):
+            self.reservations = []
+
+        def create_single_reservation(self, tool_name, start_time, end_time, user):
+            if not self.is_tool_available(tool_name, start_time, end_time):
+                return "Tool is not available during the specified time."
+            reservation = SingleReservation(tool_name, start_time, end_time, user)
+            self.reservations.append(reservation)
+            return "Single reservation created successfully."
+
+        def create_multiple_reservation(self, tool_name, start_time, end_time, users):
+            if not self.is_tool_available(tool_name, start_time, end_time):
+                return "Tool is not available during the specified time."
+            reservation = MultipleReservation(tool_name, start_time, end_time, users)
+            self.reservations.append(reservation)
+            return "Multiple reservation created successfully."
+
+        def is_tool_available(self, tool_name, start_time, end_time):
+            for reservation in self.reservations:
+                if reservation.tool_name == tool_name and not (
+                    end_time <= reservation.start_time or start_time >= reservation.end_time
+                ):
+                    return False
+            return True
+
+        def reservation_history(self, tool_name):
+            return [str(res) for res in self.reservations if res.tool_name == tool_name]
+
+    # Complaint System
+    class ComplaintManager:
+        def __init__(self):
+            self.complaints = []
+
+        def file_complaint(self, complaining_user, reported_user, tool_name, complaint_text):
+            complaint_id = len(self.complaints) + 1
+            complaint = Complaint(complaint_id, complaining_user, reported_user, complaint_text)
+            self.complaints.append(complaint)
+            return "Complaint filed successfully."
+
+        def list_complaints(self):
+            return [str(complaint) for complaint in self.complaints]
+
+    # Example Usage
+    if __name__ == "__main__":
+        user_manager = UserManager()
+        tool_manager = ToolManager()
+        reservation_manager = ReservationManager()
+        complaint_manager = ComplaintManager()
+
+        # User Management
+        print(user_manager.register_user("alice", "password123", "alice@example.com"))
+        print(user_manager.register_user("bob", "securepassword", "bob@example.com"))
+        print(user_manager.register_user("charlie", "charliesecure", "charlie@example.com"))
+        print(user_manager.login("alice", "password123"))
+        print(user_manager.login("bob", "nepareiza parole"))
+
+        # Tool Management
+        print(tool_manager.add_tool("Microwave", "For heating food"))
+        print(tool_manager.add_tool("Coffee Maker", "For brewing coffee"))
+        print(tool_manager.list_tools())
+
+        # Reservation Management
+        start_time = datetime.now() + timedelta(hours=1)
+        end_time = start_time + timedelta(hours=1)
+
+        # Single Reservation for Alice
+        print(reservation_manager.create_single_reservation("Microwave", start_time, end_time, "alice"))
+        print(reservation_manager.reservation_history("Microwave"))
+
+        # Multiple Reservation for Bob and Charlie
+        start_time_multiple = datetime.now() + timedelta(hours=2)
+        end_time_multiple = start_time_multiple + timedelta(hours=1)
+        print(reservation_manager.create_multiple_reservation("Microwave", start_time_multiple, end_time_multiple, ["bob", "charlie"]))
+        print(reservation_manager.reservation_history("Microwave"))
+
+        # Complaint Management
+        print(complaint_manager.file_complaint("alice", "bob", "Microwave", "Left it dirty."))
+        print(complaint_manager.list_complaints())
 
 if __name__ == "__main__":
     main()
