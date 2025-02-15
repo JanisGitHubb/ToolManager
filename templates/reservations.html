@@ -5,6 +5,12 @@
 </head>
 <body>
     <h1>Reserve a Tool</h1>
+
+    <!-- Display the error message if it's not empty -->
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
     <form method="post">
         Tool Name: <input type="text" name="tool_name" required><br>
         Start Time: <input type="datetime-local" name="start_time" required><br>

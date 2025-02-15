@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from Python.User import User
 from Python.Tool import Tool
 from Python.Main import ReservationManager, ComplaintManager, ToolManager
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Used to manage user sessions
@@ -50,12 +51,29 @@ def dashboard():
         return redirect(url_for("login"))
     return render_template("dashboard.html", username=session["user"])
 
-# View Tools
-@app.route("/tools")
+# View & Manage Tools (Admin functionality added)
+@app.route("/tools", methods=["GET", "POST"])
+
+
 def tools():
     if "user" not in session:
         return redirect(url_for("login"))
-    return render_template("tools.html", tools=tool_manager.tools.values())
+    
+    tool_manager.add_tool("Microwave", "For heating food", "admin123")
+    tool_manager.add_tool("Coffee Maker", "For brewing coffee", "admin123")
+
+    message = None
+    if request.method == "POST":
+        tool_name = request.form["tool_name"]
+        description = request.form["description"]
+        admin_password = request.form["admin_password"]
+
+        if tool_manager.authenticate_admin(admin_password):
+            message = tool_manager.add_tool(tool_name, description, admin_password)
+        else:
+            message = "Access Denied: Incorrect Admin Password"
+
+    return render_template("tools.html", tools=list(tool_manager.tools.values()), message=message)
 
 # Manage Reservations
 @app.route("/reservations", methods=["GET", "POST"])
@@ -63,14 +81,23 @@ def reservations():
     if "user" not in session:
         return redirect(url_for("login"))
 
+    message = ""
+
     if request.method == "POST":
         tool_name = request.form["tool_name"]
-        start_time = request.form["start_time"]
-        end_time = request.form["end_time"]
+        start_time = datetime.strptime(request.form["start_time"], "%Y-%m-%dT%H:%M")
+        end_time = datetime.strptime(request.form["end_time"], "%Y-%m-%dT%H:%M")
         username = session["user"]
-        reservation_manager.reserve_tool(tool_name, username, start_time, end_time)
 
-    return render_template("reservations.html", reservations=reservation_manager.reservations)
+        # Check if the tool exists
+        if tool_name in tool_manager.tools:
+            # If tool exists, proceed with reservation
+            message = reservation_manager.create_single_reservation(tool_name, start_time, end_time, username)
+        else:
+            # If tool doesn't exist, show error message
+            message = f"Error: The tool '{tool_name}' does not exist. Please select a valid tool."
+
+    return render_template("reservations.html", reservations=reservation_manager.reservations, message=message)
 
 # File a Complaint
 @app.route("/complaints", methods=["GET", "POST"])

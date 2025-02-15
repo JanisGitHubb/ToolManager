@@ -5,11 +5,34 @@
 </head>
 <body>
     <h1>Available Tools</h1>
+    
     <ul>
         {% for tool in tools %}
-        <li><strong>{{ tool.tool_name }}</strong> - {{ tool.description }}</li>
+        <li>
+            <strong>{{ tool.tool_name }}</strong> - {{ tool.description }}
+            {% if is_admin %}
+                <!-- Edit tool option for admins -->
+                <form method="post" action="{{ url_for('update_tool') }}">
+                    <input type="hidden" name="tool_name" value="{{ tool.tool_name }}">
+                    New Description: <input type="text" name="new_description" required>
+                    <input type="password" name="admin_password" placeholder="Admin Password" required>
+                    <input type="submit" value="Update">
+                </form>
+            {% endif %}
+        </li>
         {% endfor %}
     </ul>
+
+    {% if is_admin %}
+    <h2>Add a New Tool</h2>
+    <form method="post" action="{{ url_for('add_tool') }}">
+        Tool Name: <input type="text" name="tool_name" required><br>
+        Description: <input type="text" name="description" required><br>
+        <input type="password" name="admin_password" placeholder="Admin Password" required><br>
+        <input type="submit" value="Add Tool">
+    </form>
+    {% endif %}
+
     <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
 </body>
 </html>
