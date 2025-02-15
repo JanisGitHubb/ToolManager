@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from User import User
-from Tool import Tool
-from Main import ReservationManager, ComplaintManager, ToolManager
+from Python.User import User
+from Python.Tool import Tool
+from Python.Main import ReservationManager, ComplaintManager, ToolManager
 
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # Used to manage user sessions
@@ -49,6 +49,42 @@ def dashboard():
     if "user" not in session:
         return redirect(url_for("login"))
     return render_template("dashboard.html", username=session["user"])
+
+# View Tools
+@app.route("/tools")
+def tools():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("tools.html", tools=tool_manager.tools.values())
+
+# Manage Reservations
+@app.route("/reservations", methods=["GET", "POST"])
+def reservations():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        tool_name = request.form["tool_name"]
+        start_time = request.form["start_time"]
+        end_time = request.form["end_time"]
+        username = session["user"]
+        reservation_manager.reserve_tool(tool_name, username, start_time, end_time)
+
+    return render_template("reservations.html", reservations=reservation_manager.reservations)
+
+# File a Complaint
+@app.route("/complaints", methods=["GET", "POST"])
+def complaints():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        complaining_user = session["user"]
+        reported_user = request.form["reported_user"]
+        complaint_text = request.form["complaint_text"]
+        complaint_manager.file_complaint(complaining_user, reported_user, "N/A", complaint_text)
+
+    return render_template("complaints.html", complaints=complaint_manager.complaints)
 
 # Logout
 @app.route("/logout")

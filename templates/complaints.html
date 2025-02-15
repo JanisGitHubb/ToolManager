@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complaints</title>
+</head>
+<body>
+    <h1>File a Complaint</h1>
+    <form method="post">
+        Reported User: <input type="text" name="reported_user" required><br>
+        Complaint: <textarea name="complaint_text" required></textarea><br>
+        <input type="submit" value="Submit Complaint">
+    </form>
+
+    <h2>Existing Complaints</h2>
+    <ul>
+        {% for complaint in complaints %}
+        <li>{{ complaint.complaining_user }} reported {{ complaint.reported_user }} - {{ complaint.complaint_text }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

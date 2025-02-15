@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tools</title>
+</head>
+<body>
+    <h1>Available Tools</h1>
+    <ul>
+        {% for tool in tools %}
+        <li><strong>{{ tool.tool_name }}</strong> - {{ tool.description }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ username }}</h1>
+    <p>Navigate to:</p>
+    <ul>
+        <li><a href="{{ url_for('tools') }}">View Tools</a></li>
+        <li><a href="{{ url_for('reservations') }}">Manage Reservations</a></li>
+        <li><a href="{{ url_for('complaints') }}">File a Complaint</a></li>
+    </ul>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+</html>

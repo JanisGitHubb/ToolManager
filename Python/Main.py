@@ -1,7 +1,7 @@
-from Tool import *
-from User import *
-from Complaint import *
-from Reservations import *
+from Python.Tool import *
+from Python.User import *
+from Python.Complaint import *
+from Python.Reservations import *
 from datetime import datetime, timedelta
 
 # User Management
