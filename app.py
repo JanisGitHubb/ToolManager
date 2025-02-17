@@ -114,23 +114,4 @@ def reservations():
 
 # File a Complaint
 @app.route("/complaints", methods=["GET", "POST"])
-def complaints():
-    if "user" not in session:
-        return redirect(url_for("login"))
-
-    if request.method == "POST":
-        complaining_user = session["user"]
-        reported_user = request.form["reported_user"]
-        complaint_text = request.form["complaint_text"]
-        complaint_manager.file_complaint(complaining_user, reported_user, "N/A", complaint_text)
-
-    return render_template("complaints.html", complaints=complaint_manager.complaints)
-
-# Logout
-@app.route("/logout")
-def logout():
-    session.pop("user", None)
-    return redirect(url_for("home"))
-
-if __name__ == "__main__":
-    app.run(debug=True)
+d
