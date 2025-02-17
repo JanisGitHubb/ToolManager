@@ -76,6 +76,7 @@ def tools():
     return render_template("tools.html", tools=list(tool_manager.tools.values()), message=message)
 
 # Manage Reservations
+
 @app.route("/reservations", methods=["GET", "POST"])
 def reservations():
     if "user" not in session:
@@ -90,7 +91,7 @@ def reservations():
         username = session["user"]
         current_time = datetime.now()
 
-        #checko vai nav pagatne rezervacija un vai tools eksiste
+        # Check if start time is in the future
         if start_time < current_time:
             message = "Error: You cannot make a reservation for a past time."
         elif end_time <= start_time:
@@ -98,7 +99,16 @@ def reservations():
         elif tool_name not in tool_manager.tools:
             message = f"Error: The tool '{tool_name}' does not exist. Please select a valid tool."
         else:
-            message = reservation_manager.create_single_reservation(tool_name, start_time, end_time, username)
+            # Check for overlapping reservations
+            conflicting_reservation = any(
+                res.tool_name == tool_name and not (end_time <= res.start_time or start_time >= res.end_time)
+                for res in reservation_manager.reservations
+            )
+
+            if conflicting_reservation:
+                message = f"Error: The tool '{tool_name}' is already reserved for the selected time period."
+            else:
+                message = reservation_manager.create_single_reservation(tool_name, start_time, end_time, username)
 
     return render_template("reservations.html", reservations=reservation_manager.reservations, message=message)
 

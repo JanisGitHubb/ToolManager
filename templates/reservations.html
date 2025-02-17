@@ -2,19 +2,26 @@
 <html>
 <head>
     <title>Reservations</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
+            document.getElementById("start_time").min = now.toISOString().slice(0,16);
+            document.getElementById("end_time").min = now.toISOString().slice(0,16);
+        });
+    </script>
 </head>
 <body>
     <h1>Reserve a Tool</h1>
 
-    <!-- Display the error message if it's not empty -->
     {% if message %}
         <p style="color: red;">{{ message }}</p>
     {% endif %}
 
     <form method="post">
         Tool Name: <input type="text" name="tool_name" required><br>
-        Start Time: <input type="datetime-local" name="start_time" required><br>
-        End Time: <input type="datetime-local" name="end_time" required><br>
+        Start Time: <input type="datetime-local" id="start_time" name="start_time" required><br>
+        End Time: <input type="datetime-local" id="end_time" name="end_time" required><br>
         <input type="submit" value="Reserve">
     </form>
 

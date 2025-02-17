@@ -139,4 +139,4 @@ if __name__ == "__main__":
 
     # Complaint Management
     print(complaint_manager.file_complaint("alice", "bob", "Microwave", "Left it dirty."))
-    print(complaint
+    print(complaint_manager.list_complaints())
