@@ -88,14 +88,17 @@ def reservations():
         start_time = datetime.strptime(request.form["start_time"], "%Y-%m-%dT%H:%M")
         end_time = datetime.strptime(request.form["end_time"], "%Y-%m-%dT%H:%M")
         username = session["user"]
+        current_time = datetime.now()
 
-        # Check if the tool exists
-        if tool_name in tool_manager.tools:
-            # If tool exists, proceed with reservation
-            message = reservation_manager.create_single_reservation(tool_name, start_time, end_time, username)
-        else:
-            # If tool doesn't exist, show error message
+        #checko vai nav pagatne rezervacija un vai tools eksiste
+        if start_time < current_time:
+            message = "Error: You cannot make a reservation for a past time."
+        elif end_time <= start_time:
+            message = "Error: The end time must be later than the start time."
+        elif tool_name not in tool_manager.tools:
             message = f"Error: The tool '{tool_name}' does not exist. Please select a valid tool."
+        else:
+            message = reservation_manager.create_single_reservation(tool_name, start_time, end_time, username)
 
     return render_template("reservations.html", reservations=reservation_manager.reservations, message=message)
 
