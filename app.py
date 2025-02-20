@@ -12,6 +12,9 @@ user_manager = {}
 reservation_manager = ReservationManager()
 complaint_manager = ComplaintManager()
 tool_manager = ToolManager(admin_password="admin123")  # Set admin password
+tool_manager.add_tool("Microwave", "For heating food", "admin123")
+tool_manager.add_tool("Coffee Maker", "For brewing coffee", "admin123")
+
 
 # Homepage
 @app.route("/")
@@ -114,4 +117,23 @@ def reservations():
 
 # File a Complaint
 @app.route("/complaints", methods=["GET", "POST"])
-d
+def complaints():
+    if "user" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        complaining_user = session["user"]
+        reported_user = request.form["reported_user"]
+        complaint_text = request.form["complaint_text"]
+        complaint_manager.file_complaint(complaining_user, reported_user, "N/A", complaint_text)
+
+    return render_template("complaints.html", complaints=complaint_manager.complaints)
+
+# Logout
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("home"))
+
+if __name__ == "__main__":
+    app.run(debug=True)

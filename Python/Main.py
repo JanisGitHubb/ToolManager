@@ -60,22 +60,23 @@ class ToolManager:
 
 # Reservation System
 class ReservationManager:
-    def __init__(self):
+    def __init__(self, tool_manager):
         self.reservations = []
+        self.tool_manager = tool_manager 
 
     def create_single_reservation(self, tool_name, start_time, end_time, user):
+        # Check if the tool exists in the ToolManager
+        if tool_name not in self.tool_manager.tools:
+            return f"Error: The tool '{tool_name}' does not exist. Please select a valid tool."
+
+        # Check if the tool is available during the specified time
         if not self.is_tool_available(tool_name, start_time, end_time):
             return "Tool is not available during the specified time."
+        
+        # Create the reservation if the tool exists and is available
         reservation = SingleReservation(tool_name, start_time, end_time, user)
         self.reservations.append(reservation)
         return "Single reservation created successfully."
-
-    def create_multiple_reservation(self, tool_name, start_time, end_time, users):
-        if not self.is_tool_available(tool_name, start_time, end_time):
-            return "Tool is not available during the specified time."
-        reservation = MultipleReservation(tool_name, start_time, end_time, users)
-        self.reservations.append(reservation)
-        return "Multiple reservation created successfully."
 
     def is_tool_available(self, tool_name, start_time, end_time):
         for reservation in self.reservations:
@@ -139,4 +140,4 @@ if __name__ == "__main__":
 
     # Complaint Management
     print(complaint_manager.file_complaint("alice", "bob", "Microwave", "Left it dirty."))
-    print(complaint
+    print(complaint_manager.list_complaints())

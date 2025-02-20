@@ -22,4 +22,16 @@
         Tool Name: <input type="text" name="tool_name" required><br>
         Start Time: <input type="datetime-local" id="start_time" name="start_time" required><br>
         End Time: <input type="datetime-local" id="end_time" name="end_time" required><br>
-     
+        <input type="submit" value="Reserve">
+    </form>
+
+    <h2>Existing Reservations</h2>
+    <ul>
+        {% for res in reservations %}
+        <li>{{ res.tool_name }} reserved by {{ res.user }} from {{ res.start_time }} to {{ res.end_time }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>
