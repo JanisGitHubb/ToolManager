@@ -9,6 +9,7 @@ app.secret_key = "your_secret_key"  # Used to manage user sessions
 
 # Initialize managers
 user_manager = {}
+complaint_manager = ComplaintManager()
 tool_manager = ToolManager(admin_password="admin123")  # Set admin password
 complaint_manager = ComplaintManager()
 tool_manager.add_tool("Microwave", "For heating food", "admin123")

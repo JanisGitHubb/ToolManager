@@ -103,9 +103,13 @@ class ComplaintManager:
 
     def file_complaint(self, complaining_user, reported_user, tool_name, complaint_text):
         complaint_id = len(self.complaints) + 1
-        complaint = Complaint(complaint_id, complaining_user, reported_user, complaint_text)
-        self.complaints.append(complaint)
-        return "Complaint filed successfully."
+        try:
+            complaint = Complaint.create_complaint(complaint_id, complaining_user, reported_user, complaint_text)
+            self.complaints.append(complaint)
+            print("✅ Complaint successfully created!")
+        except ComplaintError as e:
+            print(e)  # ✅ Show error to the user
+        return
 
     def list_complaints(self):
         return [str(complaint) for complaint in self.complaints]
