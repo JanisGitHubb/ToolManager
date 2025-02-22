@@ -26,7 +26,7 @@ class ToolManager:
     def __init__(self, admin_password):
         self.tools = {}
         self.admin_password = admin_password
-
+    
     def authenticate_admin(self, password):
         return password == self.admin_password
 
@@ -69,11 +69,18 @@ class ReservationManager:
         if tool_name not in self.tool_manager.tools:
             return f"Error: The tool '{tool_name}' does not exist. Please select a valid tool."
 
+        if end_time <= start_time:
+            return "Error: The end time must be later than the start time."
+
+        # Check if the start time is in the past
+        if start_time < datetime.now():
+            return "Error: You cannot make a reservation for a past time."
+
         # Check if the tool is available during the specified time
         if not self.is_tool_available(tool_name, start_time, end_time):
             return "Tool is not available during the specified time."
         
-        # Create the reservation if the tool exists and is available
+        # Create the reservation if the tool exists, the time is valid, and the tool is available
         reservation = SingleReservation(tool_name, start_time, end_time, user)
         self.reservations.append(reservation)
         return "Single reservation created successfully."

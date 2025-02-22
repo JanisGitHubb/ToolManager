@@ -9,11 +9,11 @@ app.secret_key = "your_secret_key"  # Used to manage user sessions
 
 # Initialize managers
 user_manager = {}
-reservation_manager = ReservationManager()
-complaint_manager = ComplaintManager()
 tool_manager = ToolManager(admin_password="admin123")  # Set admin password
+complaint_manager = ComplaintManager()
 tool_manager.add_tool("Microwave", "For heating food", "admin123")
 tool_manager.add_tool("Coffee Maker", "For brewing coffee", "admin123")
+reservation_manager = ReservationManager(tool_manager)
 
 
 # Homepage
@@ -112,7 +112,7 @@ def reservations():
                 message = f"Error: The tool '{tool_name}' is already reserved for the selected time period."
             else:
                 message = reservation_manager.create_single_reservation(tool_name, start_time, end_time, username)
-
+                
     return render_template("reservations.html", reservations=reservation_manager.reservations, message=message)
 
 # File a Complaint

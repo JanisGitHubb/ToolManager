@@ -28,7 +28,7 @@
     <h2>Existing Reservations</h2>
     <ul>
         {% for res in reservations %}
-        <li>{{ res.tool_name }} reserved by {{ res.user }} from {{ res.start_time }} to {{ res.end_time }}</li>
+        <li>{{ res.tool_name }} reserved by {{ res.user }} from {{ res.start_time.strftime('%Y-%m-%d %H:%M:%S') }} to {{ res.end_time.strftime('%Y-%m-%d %H:%M:%S') }}</li>
         {% endfor %}
     </ul>
 
