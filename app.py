@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from Python.User import User
 from Python.Tool import Tool
-from Python.Main import ReservationManager, ComplaintManager, ToolManager
+from Python.Main import ReservationManager, ToolManager
+from Python.Complaint import ComplaintManager
 from datetime import datetime
 
 app = Flask(__name__)
@@ -11,7 +12,6 @@ app.secret_key = "your_secret_key"  # Used to manage user sessions
 user_manager = {}
 complaint_manager = ComplaintManager()
 tool_manager = ToolManager(admin_password="admin123")  # Set admin password
-complaint_manager = ComplaintManager()
 tool_manager.add_tool("Microwave", "For heating food", "admin123")
 tool_manager.add_tool("Coffee Maker", "For brewing coffee", "admin123")
 reservation_manager = ReservationManager(tool_manager)
@@ -42,6 +42,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
         user = user_manager.get(username)
+        print(user)
         if user and user.password_hash == password:
             session["user"] = username
             return redirect(url_for("dashboard"))
@@ -67,10 +68,14 @@ def tools():
     tool_manager.add_tool("Coffee Maker", "For brewing coffee", "admin123")
 
     message = None
+
+
     if request.method == "POST":
         tool_name = request.form["tool_name"]
         description = request.form["description"]
         admin_password = request.form["admin_password"]
+
+
 
         if tool_manager.authenticate_admin(admin_password):
             message = tool_manager.add_tool(tool_name, description, admin_password)
@@ -122,13 +127,20 @@ def complaints():
     if "user" not in session:
         return redirect(url_for("login"))
 
+    message = ""
+
     if request.method == "POST":
         complaining_user = session["user"]
         reported_user = request.form["reported_user"]
         complaint_text = request.form["complaint_text"]
-        complaint_manager.file_complaint(complaining_user, reported_user, "N/A", complaint_text)
 
-    return render_template("complaints.html", complaints=complaint_manager.complaints)
+
+        result = complaint_manager.file_complaint(complaining_user, reported_user, complaint_text)
+
+        if isinstance(result, str):
+            message = result
+
+    return render_template("complaints.html", complaints=complaint_manager.complaints, message=message)
 
 # Logout
 @app.route("/logout")
@@ -138,3 +150,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
