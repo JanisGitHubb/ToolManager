@@ -1,7 +1,6 @@
 from Python.Tool import *
-from Python.User import *
-from Python.Complaint import *
-from Python.Reservations import *
+import Python.User
+from Python.Reservations import SingleReservation
 from datetime import datetime, timedelta
 
 # User Management
@@ -17,6 +16,7 @@ class UserManager:
 
     def login(self, username, password):
         user = self.users.get(username)
+        print(user)
         if user and user.password_hash == password:
             return f"Welcome, {username}!"
         return "Invalid username or password."
@@ -26,11 +26,14 @@ class ToolManager:
     def __init__(self, admin_password):
         self.tools = {}
         self.admin_password = admin_password
-    
+
     def authenticate_admin(self, password):
         return password == self.admin_password
 
     def add_tool(self, tool_name, description, password):
+
+
+
         if not self.authenticate_admin(password):
             return "Access denied: Incorrect password."
         if tool_name in self.tools:
@@ -96,23 +99,6 @@ class ReservationManager:
     def reservation_history(self, tool_name):
         return [str(res) for res in self.reservations if res.tool_name == tool_name]
 
-# Complaint System
-class ComplaintManager:
-    def __init__(self):
-        self.complaints = []
-
-    def file_complaint(self, complaining_user, reported_user, tool_name, complaint_text):
-        complaint_id = len(self.complaints) + 1
-        try:
-            complaint = Complaint.create_complaint(complaint_id, complaining_user, reported_user, complaint_text)
-            self.complaints.append(complaint)
-            print("✅ Complaint successfully created!")
-        except ComplaintError as e:
-            print(e)  # ✅ Show error to the user
-        return
-
-    def list_complaints(self):
-        return [str(complaint) for complaint in self.complaints]
 
 # Example Usage
 if __name__ == "__main__":
@@ -120,7 +106,6 @@ if __name__ == "__main__":
     tool_manager = ToolManager(admin_password)
     user_manager = UserManager()
     reservation_manager = ReservationManager()
-    complaint_manager = ComplaintManager()
 
     # User Management
     print(user_manager.register_user("alice", "password123", "alice@example.com"))
@@ -149,6 +134,4 @@ if __name__ == "__main__":
     print(reservation_manager.create_single_reservation("Microwave", start_time, end_time, "alice"))
     print(reservation_manager.reservation_history("Microwave"))
 
-    # Complaint Management
-    print(complaint_manager.file_complaint("alice", "bob", "Microwave", "Left it dirty."))
-    print(complaint_manager.list_complaints())
+

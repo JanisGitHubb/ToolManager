@@ -2,9 +2,16 @@
 <html>
 <head>
     <title>Complaints</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/dark-theme.css') }}">
+
 </head>
 <body>
     <h1>File a Complaint</h1>
+
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
+
     <form method="post">
         Reported User: <input type="text" name="reported_user" required><br>
         Complaint: <textarea name="complaint_text" required></textarea><br>

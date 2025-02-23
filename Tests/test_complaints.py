@@ -1,7 +1,8 @@
 
 import pytest
-from Python.Complaint import Complaint, ComplaintError
+from Python.Complaint import Complaint
 
+mock_users = ["janis","peteris", "Alice", "Bob"]
 def test_complaint_creation():
     """Test if a complaint object is created correctly."""
     complaint = Complaint(1, "Alice", "Bob", "Complaint text")
@@ -13,9 +14,7 @@ def test_complaint_creation():
 
 
 @pytest.fixture
-def mock_users():
-    """Mock a list of existing users."""
-    return {"Alice", "Bob", "Charlie"}
+
 
 def test_complaint_with_existing_user(mock_users):
     """Ensure a complaint can be made against an existing user."""
@@ -24,13 +23,21 @@ def test_complaint_with_existing_user(mock_users):
 
 
 def test_complaint_against_self():
-    with pytest.raises(ComplaintError, match="A user cannot file a complaint against themselves."):
-        Complaint.create_complaint(1, "Alice", "Alice", "They were rude!")
+
+    complaining_user = "Alice"
+    reported_user = complaining_user
+    result = Complaint.create_complaint(1, complaining_user, reported_user, "They were rude!")
+    assert result == "Kļūda: Lietotājs nevar sūdzēties par sevi!"
 
 def test_complaint_against_nonexistent_user():
-    with pytest.raises(ComplaintError, match="Reported user does not exist!"):
-        Complaint.create_complaint(2, "Alice", "UnknownUser", "Scammed me!")
+    complaining_user = "Alice"
+    reported_user = "non_existent"
+    result = Complaint.create_complaint(2, complaining_user, reported_user, "They were rude!")
+    assert result == "Kļūda: Lietotājs neeksistē"
+
 
 def test_empty_complaint_text():
-    with pytest.raises(ComplaintError, match="Complaint text cannot be empty!"):
-        Complaint.create_complaint(3, "Alice", "Bob", "")
+    complaining_user = "Alice"
+    reported_user = "Bob"
+    result = Complaint.create_complaint(3, complaining_user, reported_user, "")
+    assert result == "Kļūda: Sūdzības teksts nevar būt tukšs"
