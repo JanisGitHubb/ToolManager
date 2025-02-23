@@ -1,0 +1,31 @@
+/* Dark theme styles */
+body {
+    background-color: #121212;  /* Dark background */
+    color: #ffffff;  /* Light text */
+    font-family: Arial, sans-serif;
+}
+
+header, footer {
+    background-color: #1f1f1f;  /* Slightly lighter dark background */
+    color: #cccccc;  /* Lighter text in header/footer */
+}
+
+a {
+    color: #bb86fc;  /* Light purple color for links */
+}
+
+a:hover {
+    color: #3700b3;  /* Dark purple when hovering over links */
+}
+
+button {
+    background-color: #8f8f8f;  /* Button color */
+    color: #8f8f8f;  /* Button text color */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3700b3;  /* Darker button color when hovered */
+}
