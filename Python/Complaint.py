@@ -1,8 +1,5 @@
 from datetime import datetime
 
-
-
-
 class Complaint:
     def __init__(self, complaint_id, complaining_user, reported_user, complaint_text):
         self.complaint_id = complaint_id
@@ -16,7 +13,6 @@ class Complaint:
         if username in user_manager.users:
             return True
         return False
-
 
 
     @classmethod
@@ -37,11 +33,8 @@ class Complaint:
         if not complaint_text.strip():
             return "Kļūda: Sūdzības teksts nevar būt tukšs"
 
-
-
         print("DEBUG: Complaint successfully created!")
         return cls(complaint_id, complaining_user, reported_user, complaint_text)
-
 
 class ComplaintManager:
     def __init__(self):

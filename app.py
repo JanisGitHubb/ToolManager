@@ -6,12 +6,12 @@ from Python.Complaint import ComplaintManager
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key"  # Used to manage user sessions
+app.secret_key = "your_secret_key"  # To manage user sessions
 
 # Initialize managers
 user_manager = {}
 complaint_manager = ComplaintManager()
-tool_manager = ToolManager(admin_password="admin123")  # Set admin password
+tool_manager = ToolManager(admin_password="admin123")  # Set admin password (not yet integrated in html)
 tool_manager.add_tool("Microwave", "For heating food", "admin123")
 tool_manager.add_tool("Coffee Maker", "For brewing coffee", "admin123")
 reservation_manager = ReservationManager(tool_manager)
@@ -22,7 +22,7 @@ reservation_manager = ReservationManager(tool_manager)
 def home():
     return render_template("index.html")
 
-# User Registration
+# Registration
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -35,7 +35,7 @@ def register():
         return redirect(url_for("login"))
     return render_template("register.html")
 
-# User Login
+# Login
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -49,14 +49,14 @@ def login():
         return "Invalid login details"
     return render_template("login.html")
 
-# Dashboard for logged-in users
+# Dashboard
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect(url_for("login"))
     return render_template("dashboard.html", username=session["user"])
 
-# View & Manage Tools (Admin functionality added)
+# View & Manage Tools (Admin functionality added, not yet integrated in html)
 @app.route("/tools", methods=["GET", "POST"])
 
 
@@ -69,13 +69,10 @@ def tools():
 
     message = None
 
-
     if request.method == "POST":
         tool_name = request.form["tool_name"]
         description = request.form["description"]
         admin_password = request.form["admin_password"]
-
-
 
         if tool_manager.authenticate_admin(admin_password):
             message = tool_manager.add_tool(tool_name, description, admin_password)
@@ -84,7 +81,8 @@ def tools():
 
     return render_template("tools.html", tools=list(tool_manager.tools.values()), message=message)
 
-# Manage Reservations
+
+# Reservations
 
 @app.route("/reservations", methods=["GET", "POST"])
 def reservations():
@@ -100,7 +98,7 @@ def reservations():
         username = session["user"]
         current_time = datetime.now()
 
-        # Check if start time is in the future
+        # Is start time is in the future
         if start_time < current_time:
             message = "Error: You cannot make a reservation for a past time."
         elif end_time <= start_time:
@@ -121,7 +119,7 @@ def reservations():
                 
     return render_template("reservations.html", reservations=reservation_manager.reservations, message=message)
 
-# File a Complaint
+# Complaint
 @app.route("/complaints", methods=["GET", "POST"])
 def complaints():
     if "user" not in session:

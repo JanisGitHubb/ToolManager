@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-# Base Class for Reservation
+# Reservation base class
 class Reservation(ABC):
     def __init__(self, tool_name, start_time, end_time):
         self.tool_name = tool_name
@@ -14,7 +14,7 @@ class Reservation(ABC):
         """Abstract method to enforce string representation in subclasses."""
         pass
 
-# Vienas personas Reservation 
+# Single person res 
 class SingleReservation(Reservation):
     def __init__(self, tool_name, start_time, end_time, user):
         super().__init__(tool_name, start_time, end_time)
@@ -24,7 +24,7 @@ class SingleReservation(Reservation):
         return (f"Vienas personas rezervacija: {self.user}, Tool: {self.tool_name}, "
                 f"Start: {self.start_time}, End: {self.end_time}, izveidots: {self.created_at}")
 
-# Multiple Reservation 
+# Multiple person res (not yet integrated in html)
 class MultipleReservation(Reservation):
     def __init__(self, tool_name, start_time, end_time, users):
         super().__init__(tool_name, start_time, end_time)
