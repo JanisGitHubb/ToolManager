@@ -1,5 +1,5 @@
 from Python.Tool import *
-import Python.User
+from Python.User import *
 from Python.Reservations import SingleReservation
 from datetime import datetime, timedelta
 
