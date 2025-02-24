@@ -10,5 +10,3 @@ def test_tool_creation():
     assert tool.tool_name == test_tool
     assert tool.description == test_decription
     assert tool.available == True
-
-def
