@@ -77,6 +77,12 @@ class ReservationManager:
         if start_time < datetime.now():
             return "Error: You cannot make a reservation for a past time."
 
+        # Ensure start time is not more than 2 hours in advance
+        max_reservation_time = datetime.now() + timedelta(hours=2)
+        if start_time > max_reservation_time:
+            return "Error: Reservations can only be made up to 2 hours in advance."
+
+
         # is tool available
         if not self.is_tool_available(tool_name, start_time, end_time):
             return "Tool is not available during the specified time."
